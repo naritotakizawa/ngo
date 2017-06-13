@@ -1,7 +1,7 @@
 from ngo.urls import url
-from tests.test_app2 import views
+from tests.project2.app1 import views
 
-app_name = 'test_app2'
+app_name = 'app1'
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),

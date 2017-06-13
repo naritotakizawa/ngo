@@ -3,11 +3,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 INSTALLED_APPS = [
-    'test_app1',
-    'test_app2',
+    'app1',
+    'app2',
 ]
 
-ROOT_URLCONF = 'tests.test_project.urls'
+ROOT_URLCONF = 'tests.project1.project.urls'
 
 WSGI_APPLICATION = [
     'ngo.wsgi.RedirectApp',

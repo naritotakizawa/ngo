@@ -9,7 +9,7 @@ urlpatterns = [
 from ngo.urls import url, include
 
 urlpatterns = [
-    url(r'^test_app2/', include('tests.test_app2.urls')),
-    url(r'^', include('tests.test_app1.urls')),
+    url(r'^app2/', include('tests.project1.app2.urls')),
+    url(r'^', include('tests.project1.app1.urls')),
 ]
     

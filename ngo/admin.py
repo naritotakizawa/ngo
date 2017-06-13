@@ -33,7 +33,11 @@ def startproject(project_name):
             fp.write(src)
     
 
-if __name__ == '__main__':
+def main():
     function_name, args = sys.argv[1], sys.argv[2:]
     function = globals()[function_name]
     function(*args)
+    
+
+if __name__ == '__main__':
+    main()

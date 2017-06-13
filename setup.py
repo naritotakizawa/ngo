@@ -50,7 +50,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    tests_require = ['pytest'],
+    tests_require = ['pytest', 'jinja2'],
     cmdclass = {'test': PyTest},
     entry_points={'console_scripts': [
         'ngo-admin = ngo.admin:main',

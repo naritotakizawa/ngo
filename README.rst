@@ -1,6 +1,8 @@
 ===
 ngo
 ===
+.. image:: https://travis-ci.org/naritotakizawa/ngo.svg?branch=master
+    :target: https://travis-ci.org/naritotakizawa/ngo
 
 DjangoライクなWebフレームワークです。
 

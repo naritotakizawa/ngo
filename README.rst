@@ -13,23 +13,27 @@ Requirement
  
 Quick start
 ===========
-1. pipでインストールする。::
+1. pipでインストールする ::
 
     pip install git+https://github.com/naritotakizawa/ngo
+
 
 2. ngoプロジェクトの作成 ::
 
     ngo-admin startproject project
 
+
 3. ngoアプリケーションの作成 ::
 
     python manage.py startapp app
+
 
 4. project.settings.pyを編集 ::
 
     INSTALLED_APPS = [
         'app',
     ]
+
 
 5. project.urls.pyを編集 ::
 
@@ -38,6 +42,7 @@ Quick start
     urlpatterns = [
         url(r'^', include('app.urls')),
     ]
+
 
 6. 開発用サーバーを起動 ::
 

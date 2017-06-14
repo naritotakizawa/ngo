@@ -19,7 +19,8 @@ for app in settings.INSTALLED_APPS:
         template_dirs.append(template_dir)
 
 
-def render(request, template_name, context=None, content_type=None, status=200):
+def render(request, template_name, context=None,
+           content_type=None, status=200):
     """HttpResponseを作成する."""
     engine = engine_class(template_dirs)
     template = engine.get_template(template_name)

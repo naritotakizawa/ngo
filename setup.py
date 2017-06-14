@@ -17,9 +17,10 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
+        import shlex
         #import here, cause outside the eggs aren't loaded
         import pytest
-        errno = pytest.main(self.pytest_args)
+        errno = pytest.main(shlex.split(self.pytest_args))
         sys.exit(errno)
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst'), 'rb') as readme:

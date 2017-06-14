@@ -7,7 +7,7 @@ from ngo.exceptions import NoReverseMatch, Resolver404
 
 
 def normalize(url_string):
-    """URLの正規化を行う.
+    r"""URLの正規化を行う.
 
     >>> ^app2/^hello/user/(?P<name>\w+)/(?P<pk>\d+)/$
     /app2/hello/user/{name}/{pk}/
@@ -22,7 +22,6 @@ def normalize(url_string):
     /hello/
 
     """
-
     url_string = url_string.replace('^', '')
     url_string = url_string.replace('$', '')
     if not url_string.startswith('/'):
@@ -93,7 +92,7 @@ def reverse(viewname, **kwargs):
                     pattern = url_pattern_instanse.regex.pattern
 
                     # それぞれのregex部分の文字列をnormalizeへ渡し、正規化する
-                    url = normalize(f'{parent_pattern}{pattern}')
+                    url = normalize(parent_pattern + pattern)
 
                     # pk=1 などがあれば、あてはめる
                     if kwargs:
@@ -101,7 +100,7 @@ def reverse(viewname, **kwargs):
                     return url
 
     else:
-        raise NoReverseMatch(f'{viewname}が見つかりません')
+        raise NoReverseMatch('{}が見つかりません'.format(viewname))
 
 
 class ResolverMatch:
@@ -114,29 +113,37 @@ class ResolverMatch:
     """
 
     def __init__(self, func, kwargs, url_name, app_name):
+        """init."""
         self.func = func
         self.kwargs = kwargs
         self.url_name = url_name
         self.app_name = app_name
 
     def __getitem__(self, index):
-        """callback, callback_kwargs = ResolverMatch() ができるようになる"""
+        """callback, callback_kwargs = ResolverMatch() ができるようになる."""
         return (self.func, self.kwargs)[index]
 
     def __repr__(self):
-        return  f'<ResolverMatch {self.app_name}:{self.url_name}>'
+        """repr."""
+        return '<ResolverMatch {}:{}>'.format(
+            self.app_name, self.url_name
+        )
 
 
 class RegexURLPattern:
     """url(r'^$', views.home, name='home')を変換したオブジェクト."""
 
     def __init__(self, regex, callback, url_name):
+        """init."""
         self.regex = re.compile(regex)
         self.callback = callback
         self.url_name = url_name
 
     def __repr__(self):
-        return f'<RegexURLPattern {self.url_name} {self.regex.pattern}>'
+        """repr."""
+        return '<RegexURLPattern {} {}>'.format(
+            self.url_name, self.regex.pattern
+        )
 
     def resolve(self, path, app_name):
         """URLの解決を行う."""
@@ -153,12 +160,16 @@ class RegexURLResolver:
     """url(r'^', include('app.urls'))を変換したオブジェクト."""
 
     def __init__(self, regex, urlconf_name, app_name=None):
+        """init."""
         self.regex = re.compile(regex)
         self.urlconf_name = urlconf_name
         self.app_name = app_name
 
     def __repr__(self):
-        return f'<RegexURLResolver {self.app_name} {self.regex.pattern}>'
+        """repr."""
+        return '<RegexURLResolver {} {}>'.format(
+            self.app_name, self.regex.pattern
+        )
 
     def resolve(self, path, app_name=None):
         """URLの解決を行う."""
@@ -176,7 +187,7 @@ class RegexURLResolver:
                     return resolver_match
             # URL解決できなかった場合
             else:
-                raise Resolver404(f'URL Not Found {path}')
+                raise Resolver404('URL Not Found {}'.format(path))
 
     def url_patterns(self):
         """urls.pyの、urlspatternsリストを返す."""

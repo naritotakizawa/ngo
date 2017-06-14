@@ -1,3 +1,4 @@
+"""ベースとなる設定."""
 BASE_DIR = None
 
 INSTALLED_APPS = None

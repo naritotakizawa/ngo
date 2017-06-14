@@ -11,13 +11,16 @@ class HttpResponse:
 
     def __init__(self, content=b'',
                  content_type=None, status_code=200):
+        """init."""
         if isinstance(content, bytes):
             self.content = content
         elif isinstance(content, str):
             self.content = content.encode('utf-8')
 
         if content_type is None:
-            self.content_type = f'{settings.DEFAULT_CONTENT_TYPE}; charset=UTF-8'
+            self.content_type = '{}; charset=UTF-8'.format(
+                settings.DEFAULT_CONTENT_TYPE
+            )
         else:
             self.content_type = content_type
         self.status_code = status_code
@@ -29,7 +32,11 @@ class HttpResponse:
         self.headers_dict = Headers(self.headers)
 
     def __repr__(self):
-        return f'<HttpResponse {self.content_type} {self.status_code}>'
+        """repr."""
+        return '<HttpResponse {} {}>'.format(
+            self.content_type, self.status_code
+        )
 
     def __iter__(self):
+        """iter."""
         return cast_finish_response(self.content)

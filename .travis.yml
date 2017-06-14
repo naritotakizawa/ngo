@@ -3,5 +3,8 @@ language: python
 python:
     - "3.6"
 
+install:
+    - pip install tox
+ 
 script:
-    - python -Wall setup.py test
+    - tox

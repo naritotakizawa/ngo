@@ -4,6 +4,9 @@ ngo
 .. image:: https://travis-ci.org/naritotakizawa/ngo.svg?branch=master
     :target: https://travis-ci.org/naritotakizawa/ngo
 
+.. image:: https://coveralls.io/repos/github/naritotakizawa/ngo/badge.svg?branch=fix-tox
+:target: https://coveralls.io/github/naritotakizawa/ngo?branch=fix-tox
+
 DjangoライクなWebフレームワークです。
 
 Requirement

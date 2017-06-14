@@ -11,7 +11,7 @@ def startproject(project_name):
     origin_project_path = os.path.join(ngo.__path__[0], 'project_template')
 
     # manaeg.pyの作成
-    manage_py_path = os.path.join(origin_project_path, 'manage.py')
+    manage_py_path = os.path.join(origin_project_path, 'manage')
     with open(manage_py_path, 'r') as fp:
         src = fp.read()
     src = src.format(project_name=project_name)
@@ -24,12 +24,12 @@ def startproject(project_name):
     os.makedirs(top_dir)
 
     # settings.py, urls.py, wsgi.pyの作成
-    for file in ['settings.py', 'urls.py', 'wsgi.py']:
+    for file in ['settings', 'urls', 'wsgi']:
         file_path = os.path.join(origin_project_path, file)
         with open(file_path, 'r') as fp:
             src = fp.read()
         src = src.format(project_name=project_name)
-        new_file_path = os.path.join(top_dir, file)
+        new_file_path = os.path.join(top_dir, file+'.py')
         with open(new_file_path, 'w') as fp:
             fp.write(src)
 

@@ -1,3 +1,4 @@
+"""設定を管理するモジュール."""
 import importlib
 import os
 from ngo import global_settings
@@ -24,6 +25,8 @@ class Settings:
                 setattr(self, setting, setting_value)
 
     def __repr__(self):
-        return f'<Settings {self.SETTINGS_MODULE}>'
+        """repr."""
+        return '<Settings {}>'.format(self.SETTINGS_MODULE)
+
 
 settings = Settings()

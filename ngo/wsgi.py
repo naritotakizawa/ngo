@@ -29,6 +29,7 @@ class WSGIRequest:
     """requestオブジェクトを作成するクラス."""
 
     def __init__(self, environ):
+        """init."""
         self.environ = environ
         self.method = environ['REQUEST_METHOD']
         self.path_info = environ['PATH_INFO']
@@ -43,7 +44,10 @@ class WSGIRequest:
             self.POST = {key: form[key].value for key in form}
 
     def __repr__(self):
-        return f'<WSGIRequest {self.method} {self.path_info}>'
+        """repr."""
+        return '<WSGIRequest {} {}>'.format(
+            self.method, self.path_info
+        )
 
 
 class WSGIHandler:
@@ -52,13 +56,16 @@ class WSGIHandler:
     request_class = WSGIRequest
 
     def __init__(self, *args, **kwargs):
+        """ロジック上、引数としてNoneを受け取ることがあり、そのため上書き."""
         pass
 
     def __call__(self, environ, start_response):
         """WSGI-interface."""
         request = self.request_class(environ)
         response = self.get_response(request)
-        status = f'{response.status_code} {response.reason_phrase}'
+        status = '{} {}'.format(
+            response.status_code, response.reason_phrase
+        )
         start_response(status, response.headers)
         return response
 
@@ -75,6 +82,7 @@ class RedirectApp:
     """条件によってリダイレクトを行うWSGIミドルウェア."""
 
     def __init__(self, application):
+        """init."""
         self.application = application
 
     def __call__(self, environ, start_response):

@@ -8,7 +8,7 @@ DjangoライクなWebフレームワークです。
 
 Requirement
 ===========
-:Python: 3.6以上
+:Python: 3.4以上
  
  
 Quick start

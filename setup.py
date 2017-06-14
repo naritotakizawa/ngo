@@ -36,7 +36,7 @@ setup(
     include_package_data=True,
     license='MIT License',
     description='Simple Python Web framework',
-    long_description=README.decode(),
+    long_description=README.decode('utf-8'),
     url='https://github.com/naritotakizawa/ngo',
     author='Narito Takizawa',
     author_email='toritoritorina@gmail.com',

@@ -17,17 +17,16 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
-        import shlex
         #import here, cause outside the eggs aren't loaded
         import pytest
-        errno = pytest.main(shlex.split(self.pytest_args))
+        errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst'), 'rb') as readme:
     README = readme.read()
  
 # allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+#os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
  
 setup(
     name='ngo',
@@ -44,6 +43,8 @@ setup(
         'Environment :: Web Environment',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
@@ -51,7 +52,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    tests_require = ['pytest', 'jinja2'],
+    tests_require = ['pytest', 'pytest-cov', 'jinja2'],
     cmdclass = {'test': PyTest},
     entry_points={'console_scripts': [
         'ngo-admin = ngo.admin:main',

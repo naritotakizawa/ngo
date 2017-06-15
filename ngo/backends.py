@@ -20,7 +20,9 @@ class BaseEngine:
 
         """
 
-        pass
+        def __init__(self, template):
+            """init."""
+            self.template = template
 
     def __init__(self, dirs):
         """init."""

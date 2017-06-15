@@ -1,7 +1,7 @@
 """project1の機能をテストする"""
 import os
 os.environ['NGO_SETTINGS_MODULE'] = 'tests.project1.project.settings'
-from ngo.exceptions import Resolver404, NoReverseMatch
+from ngo.exceptions import Resolver404, NoReverseMatch, TemplateDoesNotExist
 from ngo.wsgi import get_wsgi_application
 from ngo.urls import reverse
 import pytest
@@ -128,4 +128,19 @@ def test_redirect():
     response = wsgi_app(environ, start_response)
     assert [b''] == response
         
-        
+
+def test_app1_no_template():
+    """/no/template へアクセス (テンプレートが見つからない)"""
+    url = reverse('app1:no_template')
+    assert url == '/no/template/'
+
+    wsgi_app = get_wsgi_application()
+    environ = {
+        'REQUEST_METHOD': 'GET',
+        'PATH_INFO': url,
+        'QUERY_STRING': '',
+    }
+    start_response = lambda x, y: None
+    with pytest.raises(TemplateDoesNotExist) as excinfo:
+        response = wsgi_app(environ, start_response)
+    assert 'app1/aaaaa.html Not Found' == str(excinfo.value)

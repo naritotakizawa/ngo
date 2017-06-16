@@ -25,11 +25,11 @@ def startapp(app_name):
     # views.pyとurls.pyを作成する
     origin_project_path = os.path.join(ngo.__path__[0], 'app_template')
     for file in ['views', 'urls']:
-        file_path = os.path.join(origin_project_path, file+'.py')
+        file_path = os.path.join(origin_project_path)
         with open(file_path, 'r') as fp:
             src = fp.read()
         src = src.format(app_name=app_name)
-        new_file_path = os.path.join(top_dir, file)
+        new_file_path = os.path.join(top_dir, file+'.py')
         with open(new_file_path, 'w') as fp:
             fp.write(src)
     

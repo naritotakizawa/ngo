@@ -14,4 +14,4 @@ script:
     - python -Wall setup.py test -a "--cov ngo --cov-report term-missing"
 
 after_success:
-  - coveralls
+    - coveralls

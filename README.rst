@@ -20,7 +20,7 @@ Quick start
 ===========
 1. pipでインストールする ::
 
-    pip install git+https://github.com/naritotakizawa/ngo
+    pip install -U https://github.com/naritotakizawa/ngo/archive/master.tar.gz
 
 
 2. ngoプロジェクトの作成 ::

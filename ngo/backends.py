@@ -1,5 +1,6 @@
 """テンプレートエンジンに関するモジュール."""
 import os
+import string
 from ngo.exceptions import TemplateDoesNotExist
 
 
@@ -85,19 +86,25 @@ class NgoTemplates(BaseEngine):
 
     """
 
-    class Template:
+    class Template(string.Template):
         """標準のTemplateクラス."""
 
-        def __init__(self, template):
-            """init."""
-            self.template = template
+        delimiter = '{{'
+        pattern = r'''
+        \{\{(?:
+        (?P<escaped>\{\{)|
+        (?P<named>[_a-z][_a-z0-9]*)\}\}|
+        (?P<braced>[_a-z][_a-z0-9]*)\}\}|
+        (?P<invalid>)
+        )
+        '''
 
         def render(self, request, context=None):
             """描画。.format_mapを行うだけ."""
             if context is None:
                 context = {}
-            context['request'] = request
-            return self.template.format_map(context)
+            context['test'] = 'test'
+            return self.safe_substitute(context)
 
     def get_template_or_src(self, template_name):
         """htmlソースを返す."""

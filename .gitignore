@@ -7,3 +7,10 @@ __pycache__
 
 .coverage
 .tox
+
+build
+dist
+
+manage.py
+myproject
+myapp

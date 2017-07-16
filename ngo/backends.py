@@ -1,4 +1,5 @@
 """テンプレートエンジンに関するモジュール."""
+from collections import ChainMap as _ChainMap
 import os
 import string
 from ngo.exceptions import TemplateDoesNotExist
@@ -57,10 +58,8 @@ class Jinja2(BaseEngine):
             """init."""
             self.template = template
 
-        def render(self, request, context=None):
+        def render(self, request, context):
             """テンプレートの描画."""
-            if context is None:
-                context = {}
             context['request'] = request
             return self.template.render(context)
 
@@ -99,11 +98,40 @@ class NgoTemplates(BaseEngine):
         )
         '''
 
-        def render(self, request, context=None):
-            """描画。.format_mapを行うだけ."""
-            if context is None:
-                context = {}
-            context['test'] = 'test'
+        def safe_substitute(*args, **kws):
+            if not args:
+                raise TypeError(
+                    "descriptor 'safe_substitute' of 'Template' object "
+                    "needs an argument"
+                )
+            self, *args = args  # allow the "self" keyword be passed
+            if len(args) > 1:
+                raise TypeError('Too many positional arguments')
+            if not args:
+                mapping = kws
+            elif kws:
+                mapping = _ChainMap(kws, args[0])
+            else:
+                mapping = args[0]
+
+            # Helper function for .sub()
+            def convert(mo):
+                named = mo.group('named') or mo.group('braced')
+                if named is not None:
+                    try:
+                        return str(mapping[named])
+                    except KeyError:
+                        return ''
+                if mo.group('escaped') is not None:
+                    return self.delimiter
+                if mo.group('invalid') is not None:
+                    return mo.group()
+                raise ValueError('Unrecognized named group in pattern',
+                                 self.pattern)
+            return self.pattern.sub(convert, self.template)
+
+        def render(self, request, context):
+            """描画。.safe_substituteを行うだけ."""
             return self.safe_substitute(context)
 
     def get_template_or_src(self, template_name):

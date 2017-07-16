@@ -4,6 +4,7 @@ import importlib
 from urllib import parse
 from ngo.conf import settings
 from ngo.urls import get_resolver
+from ngo.utils import MultiValueDict, FileWrapper
 
 
 def get_wsgi_application():
@@ -31,17 +32,56 @@ class WSGIRequest:
     def __init__(self, environ):
         """init."""
         self.environ = environ
-        self.method = environ['REQUEST_METHOD']
+        self.method = environ['REQUEST_METHOD'].upper()
         self.path_info = environ['PATH_INFO']
 
-        if self.method == 'GET':
-            self.GET = parse.parse_qs(environ['QUERY_STRING'])
+    @property
+    def FILES(self):
+        """request.FILESでアクセスされる."""
+        if not hasattr(self, '_files'):
+            self._load_post_and_files()
+        return self._files
 
-        elif self.method == 'POST':
-            wsgi_input = environ['wsgi.input']
+    @property
+    def POST(self):
+        """request.POSTでアクセスされる."""
+        if not hasattr(self, '_post'):
+            self._load_post_and_files()
+        return self._post
+
+    @property
+    def GET(self):
+        """request.GETでアクセスされる."""
+        if not hasattr(self, '_get'):
+            self._get = MultiValueDict()
+            query = parse.parse_qs(self.environ['QUERY_STRING'])
+            for key, value in query.items():
+                # valueが空文字の場合があるので、その場合は空リストを入れる
+                self._get[key] = value or []
+        return self._get
+
+    def _load_post_and_files(self):
+        """postデータとアップロードファイルを取得する."""
+        self._post = MultiValueDict()
+        self._files = MultiValueDict()
+
+        # GETパラメータを除外したenvironを作成し、cgi.FieldStorageに渡す
+        post_environ = self.environ.copy()
+        post_environ['QUERY_STRING'] = ''
+        if self.method == 'POST':
             form = cgi.FieldStorage(
-                fp=wsgi_input, environ=environ, keep_blank_values=True)
-            self.POST = {key: form[key].value for key in form}
+                fp=self.environ['wsgi.input'],
+                environ=post_environ,
+                keep_blank_values=True
+            )
+            for item in form.list:
+                # ファイルの場合は_files(FILES)へ格納
+                if item.filename:
+                    self._files.appendlist(item.name, FileWrapper(item))
+
+                # ファイルじゃなく、値が空文字じゃなければ_post(POST)へ
+                elif item.value:
+                    self._post.appendlist(item.name, item.value)
 
     def __repr__(self):
         """repr."""
@@ -94,7 +134,7 @@ class RedirectApp:
             path_info += '/'
             start_response(
                 '301 Moved Permanently',
-                [('Location', path_info)],
+                ('Location', path_info),
             )
             return [b'']
 

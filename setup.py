@@ -28,7 +28,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst'), 'rb') as readme
  
 setup(
     name='ngo',
-    version='0.1',
+    version='0.2',
     packages=find_packages(exclude=('tests',)),
     include_package_data=True,
     license='MIT License',

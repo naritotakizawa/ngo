@@ -1,27 +1,27 @@
 """project1の機能をテストする"""
 import os
 os.environ['NGO_SETTINGS_MODULE'] = 'tests.project1.project.settings'
-from ngo.exceptions import Resolver404, NoReverseMatch, TemplateDoesNotExist
-from ngo.wsgi import get_wsgi_application
-from ngo.urls import reverse
 import pytest
-
-import importlib
-from ngo import conf, template
+from ngo import conf, template, urls, wsgi
+from ngo.exceptions import Resolver404, NoReverseMatch, TemplateDoesNotExist
 
 
 def setup_module(module):
+    import importlib
     os.environ['NGO_SETTINGS_MODULE'] = 'tests.project1.project.settings'
     importlib.reload(conf)
     importlib.reload(template)
+    importlib.reload(urls)
+    importlib.reload(wsgi)
+
 
 
 def test_app1_home():
     """/ へアクセス"""
-    url = reverse('app1:home')
+    url = urls.reverse('app1:home')
     assert url == '/'
 
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': url,
@@ -39,10 +39,10 @@ def test_app1_home():
 
 def test_app2_home():
     """/app2/ へアクセス"""
-    url = reverse('app2:home')
+    url = urls.reverse('app2:home')
     assert url == '/app2/'
     
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': url,
@@ -60,10 +60,10 @@ def test_app2_home():
 
 def test_app2_hello_narito():
     """/app2/hello/narito/ へアクセス"""
-    url = reverse('app2:hello', name='narito')
+    url = urls.reverse('app2:hello', name='narito')
     assert url == '/app2/hello/narito/'
 
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': url,
@@ -81,10 +81,10 @@ def test_app2_hello_narito():
 
 def test_app2_hello():
     """/app2/hello/ へアクセス (見つからない)"""
-    url = reverse('app2:hello')
+    url = urls.reverse('app2:hello')
     assert url == '/app2/hello/{name}/'
 
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': '/app2/hello/',
@@ -100,10 +100,10 @@ def test_app1_aiueo():
     """/aiueo/ へアクセス (見つからない)"""
     
     with pytest.raises(NoReverseMatch) as excinfo:
-        url = reverse('app1:aiueo')
+        url = urls.reverse('app1:aiueo')
     assert 'app1:aiueoが見つかりません' == str(excinfo.value)
 
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': '/aiueo/',
@@ -118,7 +118,7 @@ def test_app1_aiueo():
 def test_redirect():
     """/app2 へアクセス (リダイレクト)"""
     
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': '/app2',
@@ -131,10 +131,10 @@ def test_redirect():
 
 def test_app1_no_template():
     """/no/template へアクセス (テンプレートが見つからない)"""
-    url = reverse('app1:no_template')
+    url = urls.reverse('app1:no_template')
     assert url == '/no/template/'
 
-    wsgi_app = get_wsgi_application()
+    wsgi_app = wsgi.get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': url,

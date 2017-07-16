@@ -1,27 +1,22 @@
 """どこに入れるべきか悩んでいるテスト"""
-import importlib
 import os
 os.environ['NGO_SETTINGS_MODULE'] = 'tests.project1.project.settings'
+import io
+import pytest
+from ngo import conf, template
 from ngo.backends import BaseEngine
 from ngo.conf import Settings
 from ngo.urls import ResolverMatch, RegexURLPattern, RegexURLResolver
+from ngo.utils import MultiValueDict, FileWrapper
 from ngo.response import HttpResponse
 from ngo.wsgi import WSGIRequest, cast_finish_response
 
-import importlib
-from ngo import conf, template
-
 
 def setup_module(module):
+    import importlib
     os.environ['NGO_SETTINGS_MODULE'] = 'tests.project1.project.settings'
     importlib.reload(conf)
     importlib.reload(template)
-
-
-def test_backends():
-    base_engine = BaseEngine('.')
-    template = base_engine.get_template('spam')
-    assert repr(base_engine) == '<BaseEngine>'
 
 
 def test_conf():
@@ -41,7 +36,7 @@ def test_urls():
 
 
 def test_response():
-    response = HttpResponse(b'', 'test/plain; charset=UTF-8')
+    response = HttpResponse(b'', 'test/plain')
     assert repr(response) == '<HttpResponse test/plain; charset=UTF-8 200>'
 
 
@@ -49,15 +44,46 @@ def test_wsgi():
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': '/hello/',
-        'wsgi.input': open('README.rst'),
+        'QUERY_STRING': '',
+        'wsgi.input': io.BytesIO(),
     }
     start_response = lambda x, y: None
     request = WSGIRequest(environ)
     assert repr(request) == '<WSGIRequest POST /hello/>'
+    assert request.GET == MultiValueDict()
+    assert request.POST == MultiValueDict()
+    assert request.FILES == MultiValueDict()
     
     data = list(cast_finish_response('Hello'))
     assert data == [b'Hello']
     
     data = list(cast_finish_response(['H', b'e', 'l', b'l', 'o']))
     assert data == [b'H', b'e', b'l', b'l', b'o']   
+
+def test_utils():
+    m_dict = MultiValueDict()
+    assert repr(m_dict) == '<MultiValueDict: {}>'
+    assert m_dict.get('no_key') == None
+    assert m_dict.getlist('no-key', ['hello']) == ['hello']
+    m_dict['list'] = []
+    assert m_dict['list'] == []
+    assert m_dict.get('list') == None
+    assert m_dict.getlist('list') == []
+
+
+    class Obj:
+        pass
+
+    file = io.StringIO()
+    file.write('Hello utils')
+    obj = Obj()
+    obj.file = file
+    obj.filename = 'a.txt'
+    
+    file_wrapper = FileWrapper(obj)
+    file_wrapper.save('tests')
+    with pytest.raises(IOError) as excinfo:
+        file_wrapper.save('tests')
+    assert 'File exists.' == str(excinfo.value)
+    os.remove('tests/a.txt')
     

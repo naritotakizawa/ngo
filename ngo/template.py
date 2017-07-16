@@ -20,8 +20,10 @@ for app in settings.INSTALLED_APPS:
 
 
 def render(request, template_name, context=None,
-           content_type=None, status=200):
+           content_type='text/html', status=200):
     """HttpResponseを作成する."""
+    if context is None:
+        context = {}
     engine = engine_class(template_dirs)
     template = engine.get_template(template_name)
     content = template.render(request, context)

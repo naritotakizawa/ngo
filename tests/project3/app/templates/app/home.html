@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<h1>Hello World</h1>
+<form action="" method="post" enctype="multipart/form-data">
+    <input type="text" name="text"><br>
+    <input type="text" name="text2"><br>
+    <select name="select" multiple>
+    <option value="サンプル1">選択肢のサンプル1</option>
+    <option value="サンプル2">選択肢のサンプル2</option>
+    <option value="サンプル3">選択肢のサンプル3</option>
+    <option value="サンプル4">選択肢のサンプル4</option>
+    <option value="サンプル5">選択肢のサンプル5</option>
+    </select><br>
+    <input type="file" name="files"><br>
+    <input type="file" name="files2" multiple><br>
+    <button type="submit">送信</button>
+</form>
+<p>text: {{text}}</p>
+<p>text2: {{text2}}</p>
+<p>select: {{select}}</p>
+<p>ファイル名: {{file1_name}}</p>
+<p>ファイル名2: {{file2_name}}</p>
+</body>
+</html>
+

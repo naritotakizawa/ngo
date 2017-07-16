@@ -4,12 +4,13 @@ import importlib
 import shutil
 import sys
 from wsgiref.simple_server import make_server
+from wsgiref.validate import validator
 
 
 def runserver(ip='127.0.0.1', port='8000'):
     """開発用サーバーを起動する"""
     from ngo.wsgi import get_wsgi_application
-    application = get_wsgi_application()
+    application = validator(get_wsgi_application())
     with make_server(ip, int(port), application) as httpd:
         print('Serving HTTP on %s:%s...' % (ip, port))
         httpd.serve_forever()

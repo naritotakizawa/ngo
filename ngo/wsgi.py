@@ -132,10 +132,11 @@ class RedirectApp:
             return self.application(environ, start_response)
         else:
             path_info += '/'
-            start_response(
-                '301 Moved Permanently',
+            headers = [
                 ('Location', path_info),
-            )
+                ('Content-Type', 'text/html; charset=UTF-8'),
+            ]
+            start_response('301 Moved Permanently', headers)
             return [b'']
 
 

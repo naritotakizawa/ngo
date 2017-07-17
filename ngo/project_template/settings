@@ -11,10 +11,16 @@ INSTALLED_APPS = [
 ROOT_URLCONF = '{project_name}.urls'
 
 WSGI_APPLICATION = [
+    'wsgiref.validate.validator',
     'ngo.wsgi.RedirectApp',
     'ngo.wsgi.WSGIHandler',
 ]
-
+"""
+app = None
+app = WSGIHandler(None)
+app = RedirectApp(app)
+app = validator(app)
+"""
 
 TEMPLATES = ('ngo.backends.NgoTemplates', [])
 """

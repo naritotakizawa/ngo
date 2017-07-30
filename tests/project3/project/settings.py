@@ -11,10 +11,11 @@ INSTALLED_APPS = [
 ROOT_URLCONF = 'tests.project3.project.urls'
 
 WSGI_APPLICATION = [
+    #'wsgiref.validate.validator',
     'ngo.wsgi.RedirectApp',
     'ngo.wsgi.WSGIHandler',
 ]
 
 
-TEMPLATES = ('ngo.backends.NgoTemplates', [])
+TEMPLATES = ('ngo.backends.Ngo', [])
 # TEMPLATES = ('ngo.backends.Jinja2', [])

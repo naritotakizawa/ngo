@@ -4,7 +4,7 @@ import importlib
 import shutil
 import sys
 from wsgiref.simple_server import make_server
-from ngo.backends import NgoTemplates
+from ngo.backends import NgoTemplate
 
 
 def runserver(ip='127.0.0.1', port='8000'):
@@ -29,9 +29,9 @@ def startapp(app_name):
         file_path = os.path.join(origin_project_path, file)
         with open(file_path, 'r') as fp:
             src = fp.read()
-        template = NgoTemplates.Template(src)
+        template = NgoTemplate(src)
         src = template.render(
-            None, {'app_name':app_name}
+            {'app_name':app_name}
         )
         new_file_path = os.path.join(top_dir, file+'.py')
         with open(new_file_path, 'w') as fp:

@@ -88,12 +88,12 @@ class NgoTemplates(BaseEngine):
     class Template(string.Template):
         """標準のTemplateクラス."""
 
-        delimiter = '{{'
+        # {{ }} で区切り、中身の空白は気にしない
         pattern = r'''
-        \{\{(?:
-        (?P<escaped>\{\{)|
-        (?P<named>[_a-z][_a-z0-9]*)\}\}|
-        (?P<braced>[_a-z][_a-z0-9]*)\}\}|
+        \{\{[ ]*(?:
+        (?P<escaped>\{\{[ ]*)|
+        (?P<named>[_a-z][_a-z0-9]*)[ ]*\}\}|
+        (?P<braced>[_a-z][_a-z0-9]*)[ ]*\}\}|
         (?P<invalid>)
         )
         '''

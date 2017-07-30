@@ -4,7 +4,6 @@ os.environ['NGO_SETTINGS_MODULE'] = 'tests.project1.project.settings'
 import io
 import pytest
 from ngo import conf, template
-from ngo.backends import BaseEngine
 from ngo.conf import Settings
 from ngo.urls import ResolverMatch, RegexURLPattern, RegexURLResolver
 from ngo.utils import MultiValueDict, FileWrapper

@@ -81,7 +81,6 @@ class FileWrapper:
         self.file = tempfile.NamedTemporaryFile()
         shutil.copyfileobj(file_obj.file, self.file)
         self.file.seek(0)
-        print(file_obj.file)
         file_obj.file.close()
 
     def save(self, path=None, overwrite=False):

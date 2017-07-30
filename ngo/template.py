@@ -19,12 +19,22 @@ for app in settings.INSTALLED_APPS:
         template_dirs.append(template_dir)
 
 
+def add_default_context(request, context):
+    """デフォルトコンテキストの作成."""
+    context['request'] = request
+    return context
+
+
 def render(request, template_name, context=None,
            content_type='text/html', status=200):
     """HttpResponseを作成する."""
+    # コンテキストの調整・デフォルトコンテキストの追加
     if context is None:
         context = {}
+    context = add_default_context(request, context)
+
+    # テンプレートの取得・描画
     engine = engine_class(template_dirs)
     template = engine.get_template(template_name)
-    content = template.render(request, context)
+    content = template.render(context)
     return HttpResponse(content, content_type, status)

@@ -2,7 +2,7 @@
 """ngo-admin で呼ばれる管理用コマンドモジュール."""
 import os
 import sys
-from ngo.backends import NgoTemplates
+from ngo.backends import NgoTemplate
 
 
 def startproject(project_name):
@@ -15,9 +15,9 @@ def startproject(project_name):
     manage_py_path = os.path.join(origin_project_path, 'manage')
     with open(manage_py_path, 'r') as fp:
         src = fp.read()
-    template = NgoTemplates.Template(src)
+    template = NgoTemplate(src)
     src = template.render(
-        None, {'project_name': project_name}
+        {'project_name': project_name}
     )
     new_file_path = os.path.join(top_dir, 'manage.py')
     with open(new_file_path, 'w') as fp:
@@ -32,9 +32,9 @@ def startproject(project_name):
         file_path = os.path.join(origin_project_path, file)
         with open(file_path, 'r') as fp:
             src = fp.read()
-        template = NgoTemplates.Template(src)
+        template = NgoTemplate(src)
         src = template.render(
-            None, {'project_name': project_name}
+            {'project_name': project_name}
         )
         new_file_path = os.path.join(top_dir, file+'.py')
         with open(new_file_path, 'w') as fp:

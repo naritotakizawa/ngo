@@ -126,4 +126,3 @@ def test_redirect():
     start_response = lambda x, y: None
     response = wsgi_app(environ, start_response)
     assert [b''] == response
-        

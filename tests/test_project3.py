@@ -103,6 +103,7 @@ def test_home_post2():
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
     }
+
     data = [
         ('text', 'hello'), ('text2', 'world'), ('select', '3'), ('select', '4')
     ]
@@ -133,6 +134,7 @@ def test_home_post3():
         'PATH_INFO': url,
         'QUERY_STRING': 'text=auaua&text2=oooo&select=1000&select=42',
     }
+
     data = [
         ('text', 'hello'), ('text2', 'world'), ('select', '3'), ('select', '4')
     ]

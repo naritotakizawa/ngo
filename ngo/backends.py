@@ -132,6 +132,7 @@ class NgoTemplates(BaseEngine):
 
         def render(self, request, context):
             """描画。.safe_substituteを行うだけ."""
+            context['request'] = request
             return self.safe_substitute(context)
 
     def get_template_or_src(self, template_name):

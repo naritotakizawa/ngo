@@ -12,8 +12,8 @@ from ngo.exceptions import TemplateDoesNotExist
 class Jinja2Template:
     """jinja2のTemplate."""
 
-    def __init__(self, template_or_src):
-        self.template_or_src = template_or_src
+    def __init__(self, template):
+        self.template = template
 
     def render(self, context):
         """テンプレートの描画."""
@@ -33,8 +33,8 @@ class NgoTemplate(string.Template):
     )
     '''
 
-    def __init__(self, template_or_src):
-        self.template_or_src = template_or_src
+    def __init__(self, template):
+        self.template = template
 
     def safe_substitute(*args, **kws):
         if not args:
@@ -66,7 +66,7 @@ class NgoTemplate(string.Template):
                 return mo.group()
             raise ValueError('Unrecognized named group in pattern',
                              self.pattern)
-        return self.pattern.sub(convert, self.template_or_src)
+        return self.pattern.sub(convert, self.template)
 
     def render(self, context):
         """描画。.safe_substituteを行うだけ."""

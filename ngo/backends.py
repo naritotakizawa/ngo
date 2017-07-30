@@ -9,17 +9,6 @@ import string
 from ngo.exceptions import TemplateDoesNotExist
 
 
-class Jinja2Template:
-    """jinja2のTemplate."""
-
-    def __init__(self, template):
-        self.template = template
-
-    def render(self, context):
-        """テンプレートの描画."""
-        return self.template.render(context)
-
-
 class NgoTemplate(string.Template):
     """ngo標準のTemplateクラス."""
 
@@ -76,15 +65,9 @@ class NgoTemplate(string.Template):
 class Ngo:
     """Ngoデフォルトのテンプレートエンジン."""
 
-    template = NgoTemplate
-
     def __init__(self, dirs):
         """初期化."""
         self.dirs = dirs
-
-    def __repr__(self):
-        """repr."""
-        return '<{}>'.format(self.__class__.__name__)
 
     def get_template(self, template_name):
         # template_nameというファイルがあるか各ディレクトリを探す
@@ -94,17 +77,15 @@ class Ngo:
                 # ファイルがあればソースを読み込み、Templateクラスを返す
                 with open(template_path, 'r', encoding='utf-8') as fp:
                     src = fp.read()
-                    return self.template(src)
+                    return NgoTemplate(src)
             except FileNotFoundError:
                 pass
         else:
             raise TemplateDoesNotExist('{} Not Found'.format(template_name))
 
 
-class Jinja2(Ngo):
+class Jinja2:
     """jinja2を使ったテンプレートエンジン."""
-
-    template = Jinja2Template
 
     def __init__(self, dirs):
         """初期化."""

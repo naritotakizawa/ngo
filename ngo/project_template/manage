@@ -4,6 +4,7 @@ import importlib
 import shutil
 import sys
 from wsgiref.simple_server import make_server
+from ngo.backends import NgoTemplates
 
 
 def runserver(ip='127.0.0.1', port='8000'):
@@ -28,7 +29,10 @@ def startapp(app_name):
         file_path = os.path.join(origin_project_path, file)
         with open(file_path, 'r') as fp:
             src = fp.read()
-        src = src.format(app_name=app_name)
+        template = NgoTemplates.Template(src)
+        src = template.render(
+            None, {'app_name':app_name}
+        )
         new_file_path = os.path.join(top_dir, file+'.py')
         with open(new_file_path, 'w') as fp:
             fp.write(src)
@@ -42,11 +46,10 @@ def startapp(app_name):
     new_file_path = os.path.join(top_dir, 'home.html')
     with open(new_file_path, 'w') as fp:
         fp.write(src)
-       
 
 
 if __name__ == '__main__':
-    os.environ.setdefault('NGO_SETTINGS_MODULE', '{project_name}.settings')
+    os.environ.setdefault('NGO_SETTINGS_MODULE', '{{ project_name }}.settings')
     function_name, args = sys.argv[1], sys.argv[2:]
     function = globals()[function_name]
     function(*args)

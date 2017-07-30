@@ -8,7 +8,7 @@ INSTALLED_APPS = [
 
 ]
 
-ROOT_URLCONF = '{project_name}.urls'
+ROOT_URLCONF = '{{ project_name }}.urls'
 
 WSGI_APPLICATION = [
     'wsgiref.validate.validator',
@@ -16,6 +16,7 @@ WSGI_APPLICATION = [
     'ngo.wsgi.WSGIHandler',
 ]
 """
+以下のように読み込まれていきます
 app = None
 app = WSGIHandler(None)
 app = RedirectApp(app)

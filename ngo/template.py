@@ -18,6 +18,7 @@ for app in settings.INSTALLED_APPS:
     if os.path.isdir(template_dir):
         template_dirs.append(template_dir)
 
+engine = engine_class(template_dirs)
 
 def add_default_context(request, context):
     """デフォルトコンテキストの作成."""
@@ -34,7 +35,6 @@ def render(request, template_name, context=None,
     context = add_default_context(request, context)
 
     # テンプレートの取得・描画
-    engine = engine_class(template_dirs)
     template = engine.get_template(template_name)
     content = template.render(context)
     return HttpResponse(content, content_type, status)

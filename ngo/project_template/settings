@@ -1,8 +1,9 @@
 """ユーザー設定用モジュール."""
 import os
 
+DEBUG = True
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 INSTALLED_APPS = [
 
@@ -32,3 +33,11 @@ TEMPLATES = (
 
 """
 # TEMPLATES = ('ngo.backends.Jinja2', [])
+
+
+STATICFILES_DIRS = None
+STATIC_ROOT = None
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

@@ -36,8 +36,12 @@ TEMPLATES = (
 
 
 STATICFILES_DIRS = None
-STATIC_ROOT = None
-STATIC_URL = '/static/'
+"""
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR, 'static2')
+]
+"""
+STATIC_URL = 'static'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media'

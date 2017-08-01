@@ -73,7 +73,7 @@ def get_resolver():
     """RegexURLResolverオブジェクトを返す."""
     # settings.pyの'project.urls'という文字列を、モジュールとしてimport
     urlconf_module = import_module(settings.ROOT_URLCONF)
-    return RegexURLResolver(r'^/', urlconf_module)
+    return RegexURLResolver(r'^/', urlconf_module, root_flg=True)
 
 
 def reverse(viewname, **kwargs):
@@ -133,11 +133,12 @@ class ResolverMatch:
 class RegexURLPattern:
     """url(r'^$', views.home, name='home')を変換したオブジェクト."""
 
-    def __init__(self, regex, callback, url_name):
+    def __init__(self, regex, callback, url_name, root_flg=False):
         """init."""
         self.regex = re.compile(regex)
         self.callback = callback
         self.url_name = url_name
+        self.root_flg = False  # RegexURLPatternはルートのurls.pyにはならない
 
     def __repr__(self):
         """repr."""
@@ -159,11 +160,12 @@ class RegexURLPattern:
 class RegexURLResolver:
     """url(r'^', include('app.urls'))を変換したオブジェクト."""
 
-    def __init__(self, regex, urlconf_name, app_name=None):
+    def __init__(self, regex, urlconf_name, app_name=None, root_flg=False):
         """init."""
         self.regex = re.compile(regex)
         self.urlconf_name = urlconf_name
         self.app_name = app_name
+        self.root_flg = root_flg
 
     def __repr__(self):
         """repr."""
@@ -178,16 +180,16 @@ class RegexURLResolver:
         if match:
             # 例として/app/path で/appがマッチし、/pathがnew_pathへ入る
             new_path = path[match.end():]
-
             # urlpatternsの中のRegexURLResolver、RegexURLPatternが渡され
             # 再帰的にresolveメソッドが呼び出される
             for pattern in self.url_patterns():
                 resolver_match = pattern.resolve(new_path, self.app_name)
                 if resolver_match:
                     return resolver_match
-            # URL解決できなかった場合
-            else:
-                raise Resolver404('URL Not Found {}'.format(path))
+
+        # URL解決できなかった場合
+        if self.root_flg:
+            raise Resolver404('URL Not Found {}'.format(path))
 
     def url_patterns(self):
         """urls.pyの、urlspatternsリストを返す."""

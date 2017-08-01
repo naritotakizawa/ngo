@@ -1,5 +1,5 @@
 from ngo.urls import url
-from tests.project3.app import views
+from . import views
 
 app_name = 'app'
 

@@ -83,15 +83,11 @@ class FileWrapper:
         self.file.seek(0)
         file_obj.file.close()
 
-    def save(self, path=None, overwrite=False):
+    def save(self, overwrite=False):
         """pathにファイルを書き込みます."""
-        if path is None:
-            path = os.path.join(settings.MEDIA_ROOT, self.file_name)
-            if not os.path.exists(settings.MEDIA_ROOT):
-                os.mkdir(settings.MEDIA_ROOT)
-        elif os.path.isdir(path):
-            path = os.path.join(path, self.file_name)
-
+        if not os.path.exists(settings.MEDIA_ROOT):
+            os.mkdir(settings.MEDIA_ROOT)
+        path = os.path.join(settings.MEDIA_ROOT, self.file_name)
         if not overwrite and os.path.exists(path):
             raise IOError('File exists.')
         else:

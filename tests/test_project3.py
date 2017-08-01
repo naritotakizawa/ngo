@@ -1,29 +1,59 @@
-"""project3の機能をテストする(GET、POSTで贈られたデータの確認)"""
+"""project3の機能をテストする(GET、POSTで贈られたデータやファイルの確認)"""
 import os
+import sys
 import shutil
-os.environ['NGO_SETTINGS_MODULE'] = 'tests.project3.project.settings'
 import pytest
-from ngo import conf, template, urls, wsgi, utils
-from ngo.exceptions import Resolver404, NoReverseMatch, TemplateDoesNotExist
-from ngo.utils import MultiValueDict, FileWrapper
 from .tools import add_post_environ
 
 
+CURRENT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.join(CURRENT, 'project3')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+
+
 def setup_module(module):
+    sys.path.insert(0, PROJECT_ROOT)
+    os.environ['NGO_SETTINGS_MODULE'] = 'project.settings'
+
+    from ngo.conf import settings
+    setattr(module, 'settings', settings)
+    
+    from ngo.urls import reverse
+    setattr(module, 'reverse', reverse)
+    
+    from ngo.wsgi import get_wsgi_application
+    setattr(module, 'get_wsgi_application', get_wsgi_application)
+
+    from ngo.exceptions import Resolver404, NoReverseMatch, TemplateDoesNotExist
+    setattr(module, 'Resolver404', Resolver404)
+    setattr(module, 'NoReverseMatch', NoReverseMatch)
+    setattr(module, 'TemplateDoesNotExist', TemplateDoesNotExist)
+    
     import importlib
-    os.environ['NGO_SETTINGS_MODULE'] = 'tests.project3.project.settings'
+    from project import settings, urls
+    importlib.reload(settings)
+    importlib.reload(urls)
+
+    from app import urls
+    importlib.reload(urls)
+
+    from ngo import template, conf, utils
     importlib.reload(conf)
     importlib.reload(template)
-    importlib.reload(urls)
-    importlib.reload(wsgi)
     importlib.reload(utils)
+    
+
+def teardown_module(module):
+    sys.path.pop(0)
+    os.environ.pop('NGO_SETTINGS_MODULE')
+
 
 def test_home_get1():
     """/ へアクセス"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': url,
@@ -45,10 +75,10 @@ def test_home_get1():
 
 def test_home_get2():
     """/?text=1&text2=2&select=3&select=4 へアクセス"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': url,
@@ -70,10 +100,10 @@ def test_home_get2():
 
 def test_home_post1():
     """/へアクセス(postデータなし)"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
@@ -95,10 +125,10 @@ def test_home_post1():
 
 def test_home_post2():
     """/へアクセス(postデータあり)"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
@@ -125,10 +155,10 @@ def test_home_post2():
 
 def test_home_post3():
     """/へアクセス(postとgetパラメータ、views.pyのロジックでpostデータ反映)"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
@@ -156,10 +186,10 @@ def test_home_post3():
 
 def test_home_post4():
     """/へアクセス(ファイルを一つ送信)"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
@@ -182,18 +212,18 @@ def test_home_post4():
     assert '<p>ファイル名: test1.txt</p>'.encode('utf-8') in response.content
     assert '<p>ファイル名2: </p>'.encode('utf-8') in response.content
     for _, filename, content in files:
-        path = os.path.join(conf.settings.MEDIA_ROOT, filename)
+        path = os.path.join(MEDIA_ROOT, filename)
         with open(path, 'r') as file:
             assert file.read() == content
-    shutil.rmtree(conf.settings.MEDIA_ROOT)
+    shutil.rmtree(MEDIA_ROOT)
 
 
 def test_home_post5():
     """/へアクセス(ファイルを複数送信)"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
@@ -219,18 +249,18 @@ def test_home_post5():
     assert '<p>ファイル名: test1.txt</p>'.encode('utf-8') in response.content
     assert "<p>ファイル名2: ['test2.txt', 'test3.txt', 'test4.txt']</p>".encode('utf-8') in response.content
     for _, filename, content in files:
-        path = os.path.join(conf.settings.MEDIA_ROOT, filename)
+        path = os.path.join(MEDIA_ROOT, filename)
         with open(path, 'r') as file:
             assert file.read() == content
-    shutil.rmtree(conf.settings.MEDIA_ROOT)
+    shutil.rmtree(MEDIA_ROOT)
 
 
 def test_home_post6():
     """/へアクセス(ファイルを複数送信とpostデータ)"""
-    url = urls.reverse('app:home')
+    url = reverse('app:home')
     assert url == '/'
 
-    wsgi_app = wsgi.get_wsgi_application()
+    wsgi_app = get_wsgi_application()
     environ = {
         'REQUEST_METHOD': 'POST',
         'PATH_INFO': url,
@@ -259,7 +289,7 @@ def test_home_post6():
     assert '<p>ファイル名: test1.txt</p>'.encode('utf-8') in response.content
     assert "<p>ファイル名2: ['test2.txt', 'test3.txt', 'test4.txt']</p>".encode('utf-8') in response.content
     for _, filename, content in files:
-        path = os.path.join(conf.settings.MEDIA_ROOT, filename)
+        path = os.path.join(MEDIA_ROOT, filename)
         with open(path, 'r') as file:
             assert file.read() == content
-    shutil.rmtree(conf.settings.MEDIA_ROOT)
+    shutil.rmtree(MEDIA_ROOT)

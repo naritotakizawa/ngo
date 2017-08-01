@@ -8,10 +8,10 @@ __pycache__
 .coverage
 .tox
 
-build
-dist
+/build/
+/dist/
 
-media
+/media/
 mymanage.py
-myproject
-myapp
+/myproject/
+/myapp/

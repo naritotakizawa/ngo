@@ -10,7 +10,7 @@ module = importlib.import_module(module_name)
 engine_class = getattr(module, class_name)
 
 
-# settings.pyのDIRSに加え、各アプリケーションのtemplatesディレクトリをパスに
+# settings.pyのDIRSに加え、各アプリケーションのtemplateディレクトリ
 template_dirs = settings.TEMPLATES[1]
 for app in settings.INSTALLED_APPS:
     app_path = os.path.join(settings.BASE_DIR, app)
@@ -18,11 +18,15 @@ for app in settings.INSTALLED_APPS:
     if os.path.isdir(template_dir):
         template_dirs.append(template_dir)
 
+
 engine = engine_class(template_dirs)
+
 
 def add_default_context(request, context):
     """デフォルトコンテキストの作成."""
     context['request'] = request
+    context['static_url'] = settings.STATIC_URL
+    context['media_url'] = settings.MEDIA_URL
     return context
 
 

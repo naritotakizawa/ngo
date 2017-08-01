@@ -37,16 +37,21 @@ def startapp(app_name):
         with open(new_file_path, 'w') as fp:
             fp.write(src)
     
+    # templatesディレクトリ、その中にappディレクトリ作成
+    temlate_dir = os.path.join(top_dir, 'templates', app_name)
+    os.makedirs(temlate_dir)
+
     # home.htmlを作成する 
-    top_dir = os.path.join(top_dir, 'templates', app_name)
-    os.makedirs(top_dir)
     file_path = os.path.join(origin_project_path, 'home.html')
     with open(file_path, 'r') as fp:
         src = fp.read()
-    new_file_path = os.path.join(top_dir, 'home.html')
+    new_file_path = os.path.join(temlate_dir, 'home.html')
     with open(new_file_path, 'w') as fp:
         fp.write(src)
-
+    
+    # staticディレクトリ、その中にappディレクトリ作成
+    top_dir = os.path.join(top_dir, 'static', app_name)
+    os.makedirs(top_dir)    
 
 if __name__ == '__main__':
     os.environ.setdefault('NGO_SETTINGS_MODULE', '{{ project_name }}.settings')
